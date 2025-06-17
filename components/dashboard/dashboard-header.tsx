@@ -1,4 +1,3 @@
-"use client"
 import { LogOut, Sun, Moon, Activity } from "lucide-react"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { logout } from "@/store/slices/authSlice"

@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useRef, useCallback, useEffect } from "react"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
