@@ -1,5 +1,5 @@
 import type React from "react"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import type { WellnessLogData } from "../../types"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { fetchLogs, setSearchTerm, deleteLog } from "../../store/slices/wellnessSlice"
@@ -23,7 +23,6 @@ export function WellnessLogsTable() {
     }
   }, [dispatch, user, searchTerm])
 
-  // Debounced search
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (user) {
@@ -66,11 +65,6 @@ export function WellnessLogsTable() {
     Focused: "🎯",
   }
 
-  const filteredLogs = useMemo(() => {
-    if (!searchTerm) return logs
-    return logs.filter((log) => log.activityNotes.toLowerCase().includes(searchTerm.toLowerCase()))
-  }, [logs, searchTerm])
-
   if (error) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 h-full flex items-center justify-center">
@@ -90,7 +84,7 @@ export function WellnessLogsTable() {
           />
           <input
             type="text"
-            placeholder="Search activity notes..."
+            placeholder="Search"
             value={searchTerm}
             onChange={handleSearchChange}
             className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-emerald-500 focus:ring-emerald-500/20 focus:outline-none focus:ring-4 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 focus:bg-white dark:focus:bg-gray-700"
@@ -103,7 +97,7 @@ export function WellnessLogsTable() {
           <LoadingSpinner size="lg" />
           <p className="text-gray-600 dark:text-gray-400">Loading your wellness logs...</p>
         </div>
-      ) : filteredLogs.length === 0 ? (
+      ) : logs.length === 0 ? (
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center p-12 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl border-2 border-dashed border-emerald-200 dark:border-emerald-800">
             <p className="text-emerald-600 dark:text-emerald-400 font-semibold text-lg">
@@ -135,7 +129,7 @@ export function WellnessLogsTable() {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {filteredLogs.map((log) => (
+                {logs.map((log) => (
                   <tr
                     key={log.id}
                     className="hover:bg-emerald-50 dark:hover:bg-emerald-900/10 transition-colors duration-150"

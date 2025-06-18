@@ -142,7 +142,7 @@ export function EditWellnessLogForm({ log, onSuccess, onCancel }: EditWellnessLo
           name="activityNotes"
           value={formData.activityNotes || ""}
           onChange={handleChange}
-          placeholder="Describe your activities, thoughts, or observations..."
+          placeholder="Describe your activities"
           maxLength={200}
           rows={4}
           className={`w-full px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-200 resize-none hover:bg-gray-100 dark:hover:bg-gray-600 ${

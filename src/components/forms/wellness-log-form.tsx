@@ -27,7 +27,6 @@ export function WellnessLogForm() {
 
     setFormData((prev) => ({ ...prev, [name]: processedValue }))
 
-    // Clear field error when user starts typing
     if (errors[name as keyof ValidationErrors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }))
     }
@@ -140,7 +139,7 @@ export function WellnessLogForm() {
             name="activityNotes"
             value={formData.activityNotes || ""}
             onChange={handleChange}
-            placeholder="Describe your activities, thoughts, or observations..."
+            placeholder="Describe your activities"
             maxLength={200}
             rows={4}
             className={`w-full px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-200 resize-none hover:bg-gray-100 dark:hover:bg-gray-600 ${
@@ -153,16 +152,15 @@ export function WellnessLogForm() {
           <div className="text-xs text-gray-500 dark:text-gray-400 text-right font-medium">
             {(formData.activityNotes || "").length}/200 characters
           </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-4 px-6 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-700 text-white rounded-xl font-bold text-sm uppercase tracking-wide transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed flex items-center justify-center gap-3 transform hover:scale-[1.02] disabled:transform-none mt-4"
+          >
+            {isLoading ? <LoadingSpinner size="sm" /> : null}
+            {isLoading ? "Saving..." : "Save Log Entry"}
+          </button>
         </FormField>
-
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full py-4 px-6 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-700 text-white rounded-xl font-bold text-sm uppercase tracking-wide transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed flex items-center justify-center gap-3 transform hover:scale-[1.02] disabled:transform-none"
-        >
-          {isLoading ? <LoadingSpinner size="sm" /> : null}
-          {isLoading ? "Saving..." : "Save Log Entry"}
-        </button>
       </form>
     </div>
   )

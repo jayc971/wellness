@@ -41,4 +41,5 @@ const uiSlice = createSlice({
 })
 
 export const { toggleTheme, setTheme, setLeftPanelWidth, setIsResizing } = uiSlice.actions
+export type { UIState }
 export default uiSlice.reducer
