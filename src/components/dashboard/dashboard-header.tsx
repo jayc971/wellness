@@ -1,12 +1,12 @@
 import { LogOut, Sun, Moon, Activity } from "lucide-react"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { logout } from "../../store/slices/authSlice"
-import { toggleTheme } from "../../store/slices/uiSlice"
+import { useTheme } from "@/contexts/ThemeContext"
 
 export function DashboardHeader() {
   const dispatch = useAppDispatch()
   const { user } = useAppSelector((state) => state.auth)
-  const { theme } = useAppSelector((state) => state.ui)
+  const { theme, toggleTheme } = useTheme()
 
   const getGreeting = () => {
     const hour = new Date().getHours()
@@ -26,10 +26,6 @@ export function DashboardHeader() {
 
   const handleLogout = () => {
     dispatch(logout())
-  }
-
-  const handleThemeToggle = () => {
-    dispatch(toggleTheme())
   }
 
   return (
@@ -54,23 +50,23 @@ export function DashboardHeader() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={handleThemeToggle}
-              className="p-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:shadow-md"
+              onClick={toggleTheme}
+              className="p-2 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
               aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
             >
               {theme === "light" ? (
-                <Moon size={20} className="text-gray-700 dark:text-gray-300" />
+                <Moon className="h-5 w-5" />
               ) : (
-                <Sun size={20} className="text-gray-700 dark:text-gray-300" />
+                <Sun className="h-5 w-5" />
               )}
             </button>
 
             <button
               onClick={handleLogout}
-              className="p-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:shadow-md"
+              className="p-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
               aria-label="Logout"
             >
-              <LogOut size={20} className="text-gray-700 dark:text-gray-300" />
+              <LogOut className="h-5 w-5" />
             </button>
           </div>
         </div>

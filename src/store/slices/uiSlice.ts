@@ -17,8 +17,8 @@ const getInitialTheme = () => {
 }
 
 const initialState: UIState = {
-  theme: getInitialTheme(),
-  leftPanelWidth: Number(localStorage.getItem("wellness_panel_width")) || 35,
+  theme: "light",
+  leftPanelWidth: 25,
   isResizing: false,
 }
 
