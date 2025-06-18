@@ -102,7 +102,7 @@ export function WellnessLogsTable() {
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto pr-2">
+      <div className="flex-1 overflow-x-auto">
         {filteredLogs.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 dark:text-gray-400">
@@ -110,43 +110,54 @@ export function WellnessLogsTable() {
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {filteredLogs.map((log) => (
-              <div
-                key={log.id}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-2xl">{moodEmojis[log.mood]}</span>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{log.mood}</h3>
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Mood</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Sleep</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Notes</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              {filteredLogs.map((log) => (
+                <tr key={log.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                    {new Date(log.date).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{moodEmojis[log.mood]}</span>
+                      <span className="text-sm text-gray-900 dark:text-gray-100">{log.mood}</span>
                     </div>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">{log.activityNotes}</p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                      <span>{new Date(log.date).toLocaleDateString()}</span>
-                      <span>•</span>
-                      <span>{log.sleepDuration} hours of sleep</span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                    {log.sleepDuration} hours
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                    <div className="max-w-md truncate">{log.activityNotes}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => setEditingLog(log)}
+                        className="p-2 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <Edit size={20} />
+                      </button>
+                      <button
+                        onClick={() => setDeletingLog(log)}
+                        className="p-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <Trash2 size={20} />
+                      </button>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setEditingLog(log)}
-                      className="p-2 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <Edit size={20} />
-                    </button>
-                    <button
-                      onClick={() => setDeletingLog(log)}
-                      className="p-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <Trash2 size={20} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
 
@@ -189,7 +200,7 @@ export function WellnessLogsTable() {
                 <span className="text-gray-700 dark:text-gray-300">{deletingLog.activityNotes}</span>
               </p>
             </div>
-            <p className="text-red-500 dark:text-red-400 text-sm font-medium mb-6">This action cannot be undone.</p>
+            
             <div className="flex justify-center gap-4">
               <button
                 onClick={() => setDeletingLog(null)}
