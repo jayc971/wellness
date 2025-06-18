@@ -35,29 +35,28 @@ const getInitialTheme = (): Theme => {
 // Helper function to update theme in DOM and localStorage
 const updateTheme = (theme: Theme) => {
   try {
-    console.log('Updating theme to:', theme);
     // Update localStorage first
-    localStorage.setItem(THEME_STORAGE_KEY, theme);
+    localStorage.setItem(THEME_STORAGE_KEY, theme)
     
     // Then update DOM
-    document.documentElement.classList.remove('light', 'dark');
-    document.documentElement.classList.add(theme);
+    document.documentElement.classList.remove('light', 'dark')
+    document.documentElement.classList.add(theme)
     
     // Update meta theme-color for mobile browsers
-    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]')
     if (metaThemeColor) {
       metaThemeColor.setAttribute(
         'content',
         theme === 'dark' ? '#1a1a1a' : '#ffffff'
-      );
+      )
     }
 
     // Force a reflow to ensure the DOM update is processed
-    document.documentElement.offsetHeight;
+    document.documentElement.offsetHeight
   } catch (error) {
-    console.error('Error updating theme:', error);
+    console.error('Error updating theme:', error)
   }
-};
+}
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {

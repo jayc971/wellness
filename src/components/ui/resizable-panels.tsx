@@ -65,7 +65,7 @@ export function ResizablePanels({ leftPanel, rightPanel, minLeftWidth = 25, maxL
         </div>
 
         <div
-          className={`relative flex items-center justify-center w-3 cursor-col-resize transition-colors duration-200`}
+          className={`relative flex items-center justify-center w-3 cursor-col-resize transition-colors duration-200 max-h-[65%]`}
           onMouseDown={handleMouseDown}
           role="separator"
           aria-orientation="vertical"

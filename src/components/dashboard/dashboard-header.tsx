@@ -8,13 +8,10 @@ export function DashboardHeader() {
   const { user } = useAppSelector((state) => state.auth)
   const { theme } = useAppSelector((state) => state.ui)
 
-  console.log('Current theme:', theme)
-  console.log('Full UI state:', useAppSelector((state) => state.ui))
-
   const getGreeting = () => {
     const hour = new Date().getHours()
     if (hour < 12) return "Good morning"
-    if (hour < 17) return "Good afternoon"
+    if (hour < 18) return "Good afternoon"
     return "Good evening"
   }
 
@@ -31,10 +28,8 @@ export function DashboardHeader() {
     dispatch(logout())
   }
 
-  const handleToggleTheme = () => {
-    console.log('Toggling theme from:', theme)
+  const handleThemeToggle = () => {
     dispatch(toggleTheme())
-    console.log('Theme after toggle:', useAppSelector((state) => state.ui.theme))
   }
 
   return (
@@ -59,7 +54,7 @@ export function DashboardHeader() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={handleToggleTheme}
+              onClick={handleThemeToggle}
               className="p-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:shadow-md"
               aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
             >
