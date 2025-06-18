@@ -65,27 +65,34 @@ export function WellnessLogForm() {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 h-full">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 flex flex-col">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Add Wellness Log</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
         <FormField label="Mood" error={errors.mood} required>
-          <select
-            name="mood"
-            value={formData.mood || ""}
-            onChange={handleChange}
-            className={`w-full px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 ${
-              errors.mood
-                ? "border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500/20 focus:bg-white dark:focus:bg-gray-700"
-                : "border-gray-300 dark:border-gray-600 focus:border-emerald-500 focus:ring-emerald-500/20 focus:bg-white dark:focus:bg-gray-700"
-            } focus:outline-none focus:ring-4`}
-            disabled={isLoading}
-          >
-            <option value="">Select your mood</option>
-            <option value="Happy">😊 Happy</option>
-            <option value="Stressed">😰 Stressed</option>
-            <option value="Tired">😴 Tired</option>
-            <option value="Focused">🎯 Focused</option>
-          </select>
+          <div className="relative">
+            <select
+              name="mood"
+              value={formData.mood || ""}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 appearance-none ${
+                errors.mood
+                  ? "border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500/20 focus:bg-white dark:focus:bg-gray-700"
+                  : "border-gray-300 dark:border-gray-600 focus:border-emerald-500 focus:ring-emerald-500/20 focus:bg-white dark:focus:bg-gray-700"
+              } focus:outline-none focus:ring-4`}
+              disabled={isLoading}
+            >
+              <option value="">Select your mood</option>
+              <option value="Happy">😊 Happy</option>
+              <option value="Stressed">😰 Stressed</option>
+              <option value="Tired">😴 Tired</option>
+              <option value="Focused">🎯 Focused</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
+              <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              </svg>
+            </div>
+          </div>
         </FormField>
 
         <FormField label={`Sleep Duration: ${formData.sleepDuration} hours`} error={errors.sleepDuration} required>
@@ -153,13 +160,15 @@ export function WellnessLogForm() {
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full py-3 px-4 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-        >
-          {isLoading ? <LoadingSpinner /> : "Add Log"}
-        </button>
+        <div className="mt-6">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-3 px-4 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+          >
+            {isLoading ? <LoadingSpinner /> : "Add Log"}
+          </button>
+        </div>
       </form>
     </div>
   )

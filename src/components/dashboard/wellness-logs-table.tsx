@@ -58,7 +58,7 @@ export function WellnessLogsTable() {
     Happy: "😊",
     Stressed: "😰",
     Tired: "😴",
-    Focused: "��",
+    Focused: "🎯",
   }
 
   // Filter and sort logs based on search term and date
