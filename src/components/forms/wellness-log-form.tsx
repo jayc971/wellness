@@ -155,7 +155,7 @@ export function WellnessLogForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-4 px-6 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-700 text-white rounded-xl font-bold text-sm uppercase tracking-wide transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed flex items-center justify-center gap-3 transform hover:scale-[1.02] disabled:transform-none mt-4"
+            className="w-full py-4 px-6 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-700 text-white rounded-xl font-bold text-sm uppercase tracking-wide transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed flex items-center justify-center gap-3 disabled:transform-none mt-4"
           >
             {isLoading ? <LoadingSpinner size="sm" /> : null}
             {isLoading ? "Saving..." : "Save Log Entry"}

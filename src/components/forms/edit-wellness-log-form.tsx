@@ -161,14 +161,14 @@ export function EditWellnessLogForm({ log, onSuccess, onCancel }: EditWellnessLo
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 rounded-xl font-medium transition-all duration-200 border border-gray-300 dark:border-gray-600 hover:shadow-md transform hover:scale-105"
+          className="px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 rounded-xl font-medium transition-all duration-200 border border-gray-300 dark:border-gray-600 hover:shadow-md"
           disabled={isLoading}
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-700 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 disabled:cursor-not-allowed hover:shadow-lg transform hover:scale-105 disabled:transform-none"
+          className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-700 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 disabled:cursor-not-allowed hover:shadow-lg disabled:transform-none"
           disabled={isLoading}
         >
           {isLoading ? <LoadingSpinner size="sm" /> : null}

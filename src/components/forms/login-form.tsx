@@ -96,13 +96,13 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full py-4 px-6 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-700 text-white rounded-xl font-bold text-sm uppercase tracking-wide transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed flex items-center justify-center gap-3 transform hover:scale-[1.02] disabled:transform-none"
+        className="w-full py-4 px-6 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-700 text-white rounded-xl font-bold text-sm uppercase tracking-wide transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed flex items-center justify-center gap-3 disabled:transform-none"
       >
         {isLoading ? <LoadingSpinner size="sm" /> : null}
         {isLoading ? "Signing In..." : "Sign In"}
       </button>
 
-      <div className="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
+      <div className="mt-8">
         <div className="p-5 bg-emerald-500 text-white rounded-xl mb-4 shadow-md">
           <h4 className="font-bold mb-3">Demo Credentials</h4>
           <p className="text-sm mb-1 font-mono">
@@ -114,7 +114,7 @@ export function LoginForm() {
           <button
             type="button"
             onClick={handleDemoLogin}
-            className="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md transform hover:scale-105"
+            className="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md"
             disabled={isLoading}
           >
             Fill Demo Credentials

@@ -186,7 +186,6 @@
 }
 
 .slider-custom::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -213,7 +212,6 @@
 }
 
 .slider-custom::-moz-range-thumb:hover {
-  transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -272,7 +270,6 @@
 .modal-close:hover {
   background: var(--bg-tertiary);
   color: var(--text-primary);
-  transform: scale(1.05);
 }
 
 .modal-body {
@@ -517,9 +514,9 @@ button {
 }
 
 button:hover:not(:disabled) {
-  transform: scale(1.02);
+  /* Remove scale transform */
 }
 
 .action-btn:hover:not(:disabled) {
-  transform: scale(1.05);
+  /* Remove scale transform */
 }

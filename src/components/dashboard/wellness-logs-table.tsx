@@ -158,7 +158,7 @@ export function WellnessLogsTable() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => setEditingLog(log)}
-                          className="p-2 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-lg transition-all duration-200 hover:shadow-md transform hover:scale-105"
+                          className="p-2 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-lg transition-all duration-200 hover:shadow-md"
                           title="Edit log"
                           aria-label={`Edit log from ${log.date}`}
                         >
@@ -166,7 +166,7 @@ export function WellnessLogsTable() {
                         </button>
                         <button
                           onClick={() => setDeletingLog(log)}
-                          className="p-2 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-lg transition-all duration-200 hover:shadow-md transform hover:scale-105"
+                          className="p-2 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-lg transition-all duration-200 hover:shadow-md"
                           title="Delete log"
                           aria-label={`Delete log from ${log.date}`}
                         >
@@ -223,14 +223,14 @@ export function WellnessLogsTable() {
             <div className="flex gap-4 justify-end">
               <button
                 onClick={() => setDeletingLog(null)}
-                className="px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 rounded-xl font-medium transition-all duration-200 border border-gray-300 dark:border-gray-600 hover:shadow-md transform hover:scale-105"
+                className="px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 rounded-xl font-medium transition-all duration-200 border border-gray-300 dark:border-gray-600 hover:shadow-md"
                 disabled={isDeleting}
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="px-6 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-300 dark:disabled:bg-red-700 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 disabled:cursor-not-allowed hover:shadow-lg transform hover:scale-105 disabled:transform-none"
+                className="px-6 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-300 dark:disabled:bg-red-700 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 disabled:cursor-not-allowed hover:shadow-lg disabled:transform-none"
                 disabled={isDeleting}
               >
                 {isDeleting ? <LoadingSpinner size="sm" /> : null}
