@@ -1,7 +1,7 @@
 import type { WellnessLogData } from "../types"
 
-// Mock wellness logs database
-const mockWellnessLogs: WellnessLogData[] = [
+// Initial mock data
+const initialMockLogs: WellnessLogData[] = [
   {
     id: "1",
     mood: "Happy",
@@ -28,6 +28,20 @@ const mockWellnessLogs: WellnessLogData[] = [
   },
 ]
 
+// Get logs from localStorage or use initial data
+const getStoredLogs = (): WellnessLogData[] => {
+  const storedLogs = localStorage.getItem('wellnessLogs')
+  if (storedLogs) {
+    return JSON.parse(storedLogs)
+  }
+  // If no stored logs, save initial logs and return them
+  localStorage.setItem('wellnessLogs', JSON.stringify(initialMockLogs))
+  return initialMockLogs
+}
+
+// Initialize logs from storage
+let mockWellnessLogs: WellnessLogData[] = getStoredLogs()
+
 export const wellnessAPI = {
   async getLogs(userId: string, searchTerm?: string) {
     await new Promise((resolve) => setTimeout(resolve, 500))
@@ -50,6 +64,8 @@ export const wellnessAPI = {
     }
 
     mockWellnessLogs.push(newLog)
+    // Save to localStorage after creating
+    localStorage.setItem('wellnessLogs', JSON.stringify(mockWellnessLogs))
     return { success: true, data: newLog }
   },
 
@@ -66,6 +82,8 @@ export const wellnessAPI = {
       ...logData,
     }
 
+    // Save to localStorage after updating
+    localStorage.setItem('wellnessLogs', JSON.stringify(mockWellnessLogs))
     return { success: true, data: mockWellnessLogs[logIndex] }
   },
 
@@ -78,6 +96,8 @@ export const wellnessAPI = {
     }
 
     const deletedLog = mockWellnessLogs.splice(logIndex, 1)[0]
+    // Save to localStorage after deleting
+    localStorage.setItem('wellnessLogs', JSON.stringify(mockWellnessLogs))
     return { success: true, data: deletedLog }
   },
 }

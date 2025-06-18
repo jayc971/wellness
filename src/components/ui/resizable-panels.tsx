@@ -59,8 +59,8 @@ export function ResizablePanels({ leftPanel, rightPanel, minLeftWidth = 25, maxL
   return (
     <>
       {/* Desktop Layout */}
-      <div ref={containerRef} className="hidden md:flex h-full min-h-[calc(100vh-140px)] bg-gray-50 dark:bg-gray-900">
-        <div className="flex flex-col min-w-0" style={{ width: `${leftPanelWidth}%` }}>
+      <div ref={containerRef} className="hidden md:flex h-[calc(100vh-140px)] bg-gray-50 dark:bg-gray-900">
+        <div className="flex flex-col h-full min-w-0" style={{ width: `${leftPanelWidth}%` }}>
           {leftPanel}
         </div>
 
@@ -71,10 +71,8 @@ export function ResizablePanels({ leftPanel, rightPanel, minLeftWidth = 25, maxL
           aria-orientation="vertical"
           aria-label="Resize panels"
         >
-         
-
           {/* Handle dots */}
-          <div className="absolute inset-y-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white ">
+          <div className="absolute inset-y-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white">
             <div className="flex flex-col gap-0.5">
               <div className="w-1 h-1 bg-gray-400 dark:bg-gray-500 rounded-full transition-colors duration-200"></div>
               <div className="w-1 h-1 bg-gray-400 dark:bg-gray-500 rounded-full transition-colors duration-200"></div>
@@ -83,7 +81,7 @@ export function ResizablePanels({ leftPanel, rightPanel, minLeftWidth = 25, maxL
           </div>
         </div>
 
-        <div className="flex flex-col min-w-0" style={{ width: `${100 - leftPanelWidth}%` }}>
+        <div className="flex flex-col h-full min-w-0" style={{ width: `${100 - leftPanelWidth}%` }}>
           {rightPanel}
         </div>
       </div>

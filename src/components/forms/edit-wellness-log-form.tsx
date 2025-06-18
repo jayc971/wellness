@@ -15,8 +15,8 @@ interface EditWellnessLogFormProps {
 
 export function EditWellnessLogForm({ log, onSuccess, onCancel }: EditWellnessLogFormProps) {
   const dispatch = useAppDispatch()
-  const { user } = useAppSelector((state) => state.auth)
-  const [isLoading, setIsLoading] = useState(false)
+  const { isLoading, error } = useAppSelector((state) => state.wellness)
+
   const [formData, setFormData] = useState<Partial<WellnessLogData>>({
     mood: log.mood,
     sleepDuration: log.sleepDuration,
@@ -24,7 +24,6 @@ export function EditWellnessLogForm({ log, onSuccess, onCancel }: EditWellnessLo
     date: log.date,
   })
   const [errors, setErrors] = useState<ValidationErrors>({})
-  const [submitError, setSubmitError] = useState<string>("")
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -32,11 +31,9 @@ export function EditWellnessLogForm({ log, onSuccess, onCancel }: EditWellnessLo
 
     setFormData((prev) => ({ ...prev, [name]: processedValue }))
 
-    // Clear field error when user starts typing
     if (errors[name as keyof ValidationErrors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }))
     }
-    setSubmitError("")
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,61 +45,32 @@ export function EditWellnessLogForm({ log, onSuccess, onCancel }: EditWellnessLo
       return
     }
 
-    if (!user) return
-
-    setIsLoading(true)
     try {
-      await dispatch(
-        updateLog({
-          logId: log.id!,
-          logData: {
-            ...(formData as WellnessLogData),
-            userId: user.id,
-          },
-        }),
-      ).unwrap()
-
+      await dispatch(updateLog({ logId: log.id!, logData: formData })).unwrap()
       onSuccess()
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Failed to update log")
-    } finally {
-      setIsLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      {submitError && (
-        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
-          <p className="text-red-600 dark:text-red-400 font-medium">{submitError}</p>
-        </div>
-      )}
-
+    <form onSubmit={handleSubmit} className="space-y-6">
       <FormField label="Date" error={errors.date} required>
         <input
           type="date"
           name="date"
-          value={formData.date || ""}
+          value={formData.date}
           onChange={handleChange}
-          className={`w-full px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 ${
-            errors.date
-              ? "border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500/20 focus:bg-white dark:focus:bg-gray-700"
-              : "border-gray-300 dark:border-gray-600 focus:border-emerald-500 focus:ring-emerald-500/20 focus:bg-white dark:focus:bg-gray-700"
-          } focus:outline-none focus:ring-4`}
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={isLoading}
         />
       </FormField>
 
-      <FormField label="How are you feeling?" error={errors.mood} required>
+      <FormField label="Mood" error={errors.mood} required>
         <select
           name="mood"
-          value={formData.mood || ""}
+          value={formData.mood}
           onChange={handleChange}
-          className={`w-full px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 ${
-            errors.mood
-              ? "border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500/20 focus:bg-white dark:focus:bg-gray-700"
-              : "border-gray-300 dark:border-gray-600 focus:border-emerald-500 focus:ring-emerald-500/20 focus:bg-white dark:focus:bg-gray-700"
-          } focus:outline-none focus:ring-4`}
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={isLoading}
         >
           <option value="">Select your mood</option>
@@ -126,7 +94,7 @@ export function EditWellnessLogForm({ log, onSuccess, onCancel }: EditWellnessLo
             className="w-full h-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg appearance-none cursor-pointer slider-custom [&::-webkit-slider-thumb]:opacity-0 [&::-moz-range-thumb]:opacity-0"
             disabled={isLoading}
             style={{
-              background: `linear-gradient(to right, #10b981 0%, #10b981 ${((formData.sleepDuration || 8) / 12) * 100}%, #dcfce7 ${((formData.sleepDuration || 8) / 12) * 100}%, #dcfce7 100%)`,
+              background: `linear-gradient(to right, #10b981 0%, #10b981 ${(((formData.sleepDuration as number) || 8) / 12) * 100}%, #dcfce7 ${(((formData.sleepDuration as number) || 8) / 12) * 100}%, #dcfce7 100%)`,
             }}
           />
         </div>
@@ -137,42 +105,35 @@ export function EditWellnessLogForm({ log, onSuccess, onCancel }: EditWellnessLo
         </div>
       </FormField>
 
-      <FormField label="Activity" error={errors.activityNotes} required>
+      <FormField label="Activity Notes" error={errors.activityNotes} required>
         <textarea
           name="activityNotes"
-          value={formData.activityNotes || ""}
+          value={formData.activityNotes}
           onChange={handleChange}
-          placeholder="Describe your activities"
-          maxLength={200}
-          rows={4}
-          className={`w-full px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-200 resize-none hover:bg-gray-100 dark:hover:bg-gray-600 ${
-            errors.activityNotes
-              ? "border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500/20 focus:bg-white dark:focus:bg-gray-700"
-              : "border-gray-300 dark:border-gray-600 focus:border-emerald-500 focus:ring-emerald-500/20 focus:bg-white dark:focus:bg-gray-700"
-          } focus:outline-none focus:ring-4`}
+          placeholder="What did you do today? How are you feeling?"
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={isLoading}
         />
-        <div className="text-xs text-gray-500 dark:text-gray-400 text-right font-medium">
-          {(formData.activityNotes || "").length}/200 characters
-        </div>
       </FormField>
 
-      <div className="flex gap-4 justify-end">
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+
+      <div className="flex gap-4">
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 rounded-xl font-medium transition-all duration-200 border border-gray-300 dark:border-gray-600 hover:shadow-md"
+          className="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 rounded-xl font-medium transition-all duration-200 border border-gray-300 dark:border-gray-600 hover:shadow-md transform hover:scale-105"
           disabled={isLoading}
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-700 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 disabled:cursor-not-allowed hover:shadow-lg disabled:transform-none"
           disabled={isLoading}
+          className="flex-1 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-700 text-white rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed hover:shadow-lg transform hover:scale-105 disabled:transform-none"
         >
           {isLoading ? <LoadingSpinner size="sm" /> : null}
-          {isLoading ? "Updating..." : "Update Log Entry"}
+          {isLoading ? "Updating..." : "Save Changes"}
         </button>
       </div>
     </form>

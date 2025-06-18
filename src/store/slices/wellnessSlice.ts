@@ -12,8 +12,16 @@ const initialState: WellnessState = {
 // Async thunks
 export const fetchLogs = createAsyncThunk(
   "wellness/fetchLogs",
-  async ({ userId, searchTerm }: { userId: string; searchTerm?: string }, { rejectWithValue }) => {
+  async ({ userId, searchTerm }: { userId: string; searchTerm?: string }, { getState, rejectWithValue }) => {
     try {
+      const state = getState() as { wellness: WellnessState }
+      // If we already have logs and we're just searching, filter the existing logs
+      if (state.wellness.logs.length > 0 && searchTerm) {
+        return state.wellness.logs.filter((log) => 
+          log.activityNotes.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      }
+      // Otherwise fetch from API
       const response = await wellnessAPI.getLogs(userId, searchTerm)
       return response.data || []
     } catch (error) {
@@ -75,7 +83,8 @@ const wellnessSlice = createSlice({
       })
       .addCase(fetchLogs.fulfilled, (state, action) => {
         state.isLoading = false
-        state.logs = action.payload
+        // Sort logs by date in descending order (newest first)
+        state.logs = action.payload.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       })
       .addCase(fetchLogs.rejected, (state, action) => {
         state.isLoading = false
@@ -88,6 +97,7 @@ const wellnessSlice = createSlice({
       })
       .addCase(createLog.fulfilled, (state, action) => {
         state.isLoading = false
+        // Add new log at the beginning since it's the newest
         state.logs.unshift(action.payload)
       })
       .addCase(createLog.rejected, (state, action) => {
@@ -99,6 +109,8 @@ const wellnessSlice = createSlice({
         const index = state.logs.findIndex((log) => log.id === action.payload.id)
         if (index !== -1) {
           state.logs[index] = action.payload
+          // Re-sort logs after update
+          state.logs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         }
       })
       // Delete log

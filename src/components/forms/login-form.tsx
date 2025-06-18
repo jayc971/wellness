@@ -3,13 +3,14 @@ import { useState } from "react"
 import type { LoginFormData, ValidationErrors } from "../../types"
 import { validateLogin } from "../../lib/validation"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
-import { loginUser, clearError } from "../../store/slices/authSlice"
+import { loginUser } from "../../store/slices/authSlice"
 import { FormField } from "../ui/form-field"
 import { LoadingSpinner } from "../ui/loading-spinner"
 
 export function LoginForm() {
   const dispatch = useAppDispatch()
   const { isLoading, error } = useAppSelector((state) => state.auth)
+
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
@@ -20,12 +21,8 @@ export function LoginForm() {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
 
-    // Clear field error when user starts typing
     if (errors[name as keyof ValidationErrors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }))
-    }
-    if (error) {
-      dispatch(clearError())
     }
   }
 
@@ -38,7 +35,10 @@ export function LoginForm() {
       return
     }
 
-    dispatch(loginUser(formData))
+    try {
+      await dispatch(loginUser(formData)).unwrap()
+    } catch (error) {
+    }
   }
 
   const handleDemoLogin = () => {
@@ -49,8 +49,8 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      <div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Welcome Back</h2>
         <p className="text-gray-600 dark:text-gray-400">Sign in to your wellness dashboard</p>
       </div>
@@ -102,27 +102,15 @@ export function LoginForm() {
         {isLoading ? "Signing In..." : "Sign In"}
       </button>
 
-      <div className="mt-8">
-        <div className="p-5 bg-emerald-500 text-white rounded-xl mb-4 shadow-md">
-          <h4 className="font-bold mb-3">Demo Credentials</h4>
-          <p className="text-sm mb-1 font-mono">
-            <strong>Email:</strong> demo@example.com
-          </p>
-          <p className="text-sm font-mono">
-            <strong>Password:</strong> password123
-          </p>
+      <div className="text-center">
           <button
             type="button"
             onClick={handleDemoLogin}
-            className="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md"
+            className="mt-3 px-4 py-2 hover:text-white text-gray-400 rounded-lg text-sm font-medium transition-all duration-200 "
             disabled={isLoading}
           >
             Fill Demo Credentials
           </button>
-        </div>
-        <p className="text-sm text-gray-600 dark:text-gray-400 italic text-center">
-          Use these credentials to explore the dashboard
-        </p>
       </div>
     </form>
   )

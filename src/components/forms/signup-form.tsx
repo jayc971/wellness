@@ -3,13 +3,14 @@ import { useState } from "react"
 import type { SignupFormData, ValidationErrors } from "../../types"
 import { validateSignup } from "../../lib/validation"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
-import { signupUser, clearError } from "../../store/slices/authSlice"
+import { signupUser } from "../../store/slices/authSlice"
 import { FormField } from "../ui/form-field"
 import { LoadingSpinner } from "../ui/loading-spinner"
 
 export function SignupForm() {
   const dispatch = useAppDispatch()
   const { isLoading, error } = useAppSelector((state) => state.auth)
+
   const [formData, setFormData] = useState<SignupFormData>({
     email: "",
     password: "",
@@ -21,12 +22,8 @@ export function SignupForm() {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
 
-    // Clear field error when user starts typing
     if (errors[name as keyof ValidationErrors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }))
-    }
-    if (error) {
-      dispatch(clearError())
     }
   }
 
@@ -39,34 +36,21 @@ export function SignupForm() {
       return
     }
 
-    dispatch(signupUser(formData))
+    try {
+      await dispatch(signupUser(formData)).unwrap()
+    } catch (error) {
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Create Account</h2>
-        <p className="text-gray-600 dark:text-gray-400">Join your wellness journey today</p>
-      </div>
-
-      {error && (
-        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
-          <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
-        </div>
-      )}
-
+    <form onSubmit={handleSubmit} className="space-y-6">
       <FormField label="Email" error={errors.email} required>
         <input
           type="email"
           name="email"
           value={formData.email}
           onChange={handleChange}
-          placeholder="Enter your email"
-          className={`w-full px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 ${
-            errors.email
-              ? "border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500/20 focus:bg-white dark:focus:bg-gray-700"
-              : "border-gray-300 dark:border-gray-600 focus:border-emerald-500 focus:ring-emerald-500/20 focus:bg-white dark:focus:bg-gray-700"
-          } focus:outline-none focus:ring-4`}
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={isLoading}
         />
       </FormField>
@@ -77,12 +61,7 @@ export function SignupForm() {
           name="password"
           value={formData.password}
           onChange={handleChange}
-          placeholder="Create a password (min 8 characters)"
-          className={`w-full px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 ${
-            errors.password
-              ? "border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500/20 focus:bg-white dark:focus:bg-gray-700"
-              : "border-gray-300 dark:border-gray-600 focus:border-emerald-500 focus:ring-emerald-500/20 focus:bg-white dark:focus:bg-gray-700"
-          } focus:outline-none focus:ring-4`}
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={isLoading}
         />
       </FormField>
@@ -93,23 +72,19 @@ export function SignupForm() {
           name="confirmPassword"
           value={formData.confirmPassword}
           onChange={handleChange}
-          placeholder="Confirm your password"
-          className={`w-full px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 ${
-            errors.confirmPassword
-              ? "border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500/20 focus:bg-white dark:focus:bg-gray-700"
-              : "border-gray-300 dark:border-gray-600 focus:border-emerald-500 focus:ring-emerald-500/20 focus:bg-white dark:focus:bg-gray-700"
-          } focus:outline-none focus:ring-4`}
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={isLoading}
         />
       </FormField>
 
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full py-4 px-6 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-700 text-white rounded-xl font-bold text-sm uppercase tracking-wide transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed flex items-center justify-center gap-3 disabled:transform-none"
+        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isLoading ? <LoadingSpinner size="sm" /> : null}
-        {isLoading ? "Creating Account..." : "Create Account"}
+        {isLoading ? <LoadingSpinner /> : "Sign Up"}
       </button>
     </form>
   )

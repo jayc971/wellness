@@ -72,10 +72,10 @@ export function DashboardHeader() {
 
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all duration-200 font-medium hover:shadow-lg"
+              className="p-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:shadow-md"
+              aria-label="Logout"
             >
-              <LogOut size={18} />
-              <span className="hidden sm:inline">Logout</span>
+              <LogOut size={20} className="text-gray-700 dark:text-gray-300" />
             </button>
           </div>
         </div>

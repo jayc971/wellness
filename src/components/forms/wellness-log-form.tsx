@@ -65,32 +65,10 @@ export function WellnessLogForm() {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 h-full flex flex-col">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6 flex-1">
-        <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Add Wellness Log</h3>
-
-        {error && (
-          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
-            <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
-          </div>
-        )}
-
-        <FormField label="Date" error={errors.date} required>
-          <input
-            type="date"
-            name="date"
-            value={formData.date || ""}
-            onChange={handleChange}
-            className={`w-full px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 ${
-              errors.date
-                ? "border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500/20 focus:bg-white dark:focus:bg-gray-700"
-                : "border-gray-300 dark:border-gray-600 focus:border-emerald-500 focus:ring-emerald-500/20 focus:bg-white dark:focus:bg-gray-700"
-            } focus:outline-none focus:ring-4`}
-            disabled={isLoading}
-          />
-        </FormField>
-
-        <FormField label="How are you feeling?" error={errors.mood} required>
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 h-full">
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Add Wellness Log</h2>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <FormField label="Mood" error={errors.mood} required>
           <select
             name="mood"
             value={formData.mood || ""}
@@ -134,7 +112,7 @@ export function WellnessLogForm() {
           </div>
         </FormField>
 
-        <FormField label="Activity" error={errors.activityNotes} required className="flex-1">
+        <FormField label="Activity Notes" error={errors.activityNotes} required>
           <textarea
             name="activityNotes"
             value={formData.activityNotes || ""}
@@ -152,15 +130,36 @@ export function WellnessLogForm() {
           <div className="text-xs text-gray-500 dark:text-gray-400 text-right font-medium">
             {(formData.activityNotes || "").length}/200 characters
           </div>
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-4 px-6 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 dark:disabled:bg-emerald-700 text-white rounded-xl font-bold text-sm uppercase tracking-wide transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed flex items-center justify-center gap-3 disabled:transform-none mt-4"
-          >
-            {isLoading ? <LoadingSpinner size="sm" /> : null}
-            {isLoading ? "Saving..." : "Save Log Entry"}
-          </button>
         </FormField>
+
+        <FormField label="Date" error={errors.date} required>
+          <input
+            type="date"
+            name="date"
+            value={formData.date || ""}
+            onChange={handleChange}
+            className={`w-full px-4 py-3 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 ${
+              errors.date
+                ? "border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500/20 focus:bg-white dark:focus:bg-gray-700"
+                : "border-gray-300 dark:border-gray-600 focus:border-emerald-500 focus:ring-emerald-500/20 focus:bg-white dark:focus:bg-gray-700"
+            } focus:outline-none focus:ring-4`}
+            disabled={isLoading}
+          />
+        </FormField>
+
+        {error && (
+          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+            <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full py-3 px-4 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+        >
+          {isLoading ? <LoadingSpinner /> : "Add Log"}
+        </button>
       </form>
     </div>
   )

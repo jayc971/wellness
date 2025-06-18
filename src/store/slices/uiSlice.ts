@@ -20,7 +20,7 @@ const getInitialTheme = () => {
 
 const initialState: UIState = {
   theme: getInitialTheme(),
-  leftPanelWidth: 35,
+  leftPanelWidth: Number(localStorage.getItem("wellness_panel_width")) || 35,
   isResizing: false,
 }
 
@@ -54,7 +54,9 @@ const uiSlice = createSlice({
       }
     },
     setLeftPanelWidth: (state, action: PayloadAction<number>) => {
-      state.leftPanelWidth = Math.min(Math.max(action.payload, 25), 50)
+      const clampedWidth = Math.min(Math.max(action.payload, 25), 50)
+      state.leftPanelWidth = clampedWidth
+      localStorage.setItem("wellness_panel_width", clampedWidth.toString())
     },
     setIsResizing: (state, action: PayloadAction<boolean>) => {
       state.isResizing = action.payload

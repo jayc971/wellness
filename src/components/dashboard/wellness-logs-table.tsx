@@ -1,5 +1,5 @@
 import type React from "react"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import type { WellnessLogData } from "../../types"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { fetchLogs, setSearchTerm, deleteLog } from "../../store/slices/wellnessSlice"
@@ -17,21 +17,12 @@ export function WellnessLogsTable() {
   const [deletingLog, setDeletingLog] = useState<WellnessLogData | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
+  // Fetch logs when component mounts or when search term changes
   useEffect(() => {
     if (user) {
       dispatch(fetchLogs({ userId: user.id, searchTerm }))
     }
   }, [dispatch, user, searchTerm])
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (user) {
-        dispatch(fetchLogs({ userId: user.id, searchTerm }))
-      }
-    }, 300)
-
-    return () => clearTimeout(timeoutId)
-  }, [searchTerm, dispatch, user])
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setSearchTerm(e.target.value))
@@ -39,6 +30,7 @@ export function WellnessLogsTable() {
 
   const handleEditSuccess = () => {
     setEditingLog(null)
+    // Refresh logs after successful edit
     if (user) {
       dispatch(fetchLogs({ userId: user.id, searchTerm }))
     }
@@ -51,6 +43,10 @@ export function WellnessLogsTable() {
     try {
       await dispatch(deleteLog(deletingLog.id!)).unwrap()
       setDeletingLog(null)
+      // Refresh logs after successful deletion
+      if (user) {
+        dispatch(fetchLogs({ userId: user.id, searchTerm }))
+      }
     } catch (error) {
       // Error is handled by Redux
     } finally {
@@ -62,134 +58,108 @@ export function WellnessLogsTable() {
     Happy: "😊",
     Stressed: "😰",
     Tired: "😴",
-    Focused: "🎯",
+    Focused: "��",
+  }
+
+  // Filter and sort logs based on search term and date
+  const filteredLogs = useMemo(() => {
+    let filtered = [...logs] // Create a new array
+    if (searchTerm) {
+      filtered = filtered.filter((log) => 
+        log.activityNotes.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    }
+    // Sort by date in descending order (newest first)
+    return filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  }, [logs, searchTerm])
+
+  if (isLoading && logs.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <LoadingSpinner />
+      </div>
+    )
   }
 
   if (error) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 h-full flex items-center justify-center">
-        <div className="text-red-500 dark:text-red-400 font-medium">{error}</div>
+      <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+        <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 h-full flex flex-col">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Your Wellness Journey</h3>
-        <div className="relative w-full sm:w-auto sm:flex-1 sm:max-w-80">
-          <Search
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"
-            size={20}
-          />
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-emerald-500 focus:ring-emerald-500/20 focus:outline-none focus:ring-4 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 focus:bg-white dark:focus:bg-gray-700"
-          />
-        </div>
+    <div className="flex flex-col h-full">
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+        <input
+          type="text"
+          placeholder="Search logs..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
 
-      {isLoading ? (
-        <div className="flex-1 flex flex-col items-center justify-center gap-4">
-          <LoadingSpinner size="lg" />
-          <p className="text-gray-600 dark:text-gray-400">Loading your wellness logs...</p>
-        </div>
-      ) : logs.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center p-12 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl border-2 border-dashed border-emerald-200 dark:border-emerald-800">
-            <p className="text-emerald-600 dark:text-emerald-400 font-semibold text-lg">
-              {searchTerm
-                ? `No logs found matching "${searchTerm}"`
-                : "No wellness logs yet. Start by adding your first entry!"}
+      <div className="flex-1 overflow-y-auto pr-2">
+        {filteredLogs.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 dark:text-gray-400">
+              {searchTerm ? "No logs found matching your search" : "No wellness logs found"}
             </p>
           </div>
-        </div>
-      ) : (
-        <div className="flex-1 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-          <div className="overflow-x-auto h-full">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0">
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider border-b border-gray-200 dark:border-gray-600">
-                    Date
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider border-b border-gray-200 dark:border-gray-600">
-                    Mood
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider border-b border-gray-200 dark:border-gray-600 hidden sm:table-cell">
-                    Sleep
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider border-b border-gray-200 dark:border-gray-600">
-                    Activity
-                  </th>
-                  <th className="px-6 py-4 border-b border-gray-200 dark:border-gray-600"></th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {logs.map((log) => (
-                  <tr
-                    key={log.id}
-                    className="hover:bg-emerald-50 dark:hover:bg-emerald-900/10 transition-colors duration-150"
-                  >
-                    <td className="px-6 py-5 whitespace-nowrap text-sm font-semibold text-gray-600 dark:text-gray-400">
-                      {new Date(log.date).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </td>
-                    <td className="px-6 py-5 whitespace-nowrap">
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                        {moodEmojis[log.mood]} {log.mood}
-                      </span>
-                    </td>
-                    <td className="px-6 py-5 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-gray-100 hidden sm:table-cell">
-                      {log.sleepDuration}h
-                    </td>
-                    <td className="px-6 py-5">
-                      <p className="text-sm text-gray-900 dark:text-gray-100 line-clamp-2 max-w-xs">
-                        {log.activityNotes}
-                      </p>
-                    </td>
-                    <td className="px-6 py-5 whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => setEditingLog(log)}
-                          className="p-2 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-lg transition-all duration-200 hover:shadow-md"
-                          title="Edit log"
-                          aria-label={`Edit log from ${log.date}`}
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button
-                          onClick={() => setDeletingLog(log)}
-                          className="p-2 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-lg transition-all duration-200 hover:shadow-md"
-                          title="Delete log"
-                          aria-label={`Delete log from ${log.date}`}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        ) : (
+          <div className="space-y-4">
+            {filteredLogs.map((log) => (
+              <div
+                key={log.id}
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-2xl">{moodEmojis[log.mood]}</span>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{log.mood}</h3>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-400 mb-4">{log.activityNotes}</p>
+                    <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                      <span>{new Date(log.date).toLocaleDateString()}</span>
+                      <span>•</span>
+                      <span>{log.sleepDuration} hours of sleep</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setEditingLog(log)}
+                      className="p-2 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <Edit size={20} />
+                    </button>
+                    <button
+                      onClick={() => setDeletingLog(log)}
+                      className="p-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* Edit Modal */}
       <Modal isOpen={!!editingLog} onClose={() => setEditingLog(null)} title="Edit Wellness Log">
         {editingLog && (
-          <EditWellnessLogForm log={editingLog} onSuccess={handleEditSuccess} onCancel={() => setEditingLog(null)} />
+          <EditWellnessLogForm
+            log={editingLog}
+            onSuccess={handleEditSuccess}
+            onCancel={() => setEditingLog(null)}
+          />
         )}
       </Modal>
 
-      {/* Delete Confirmation Modal */}
       <Modal isOpen={!!deletingLog} onClose={() => setDeletingLog(null)} title="Delete Wellness Log">
         {deletingLog && (
           <div className="text-center">
@@ -220,17 +190,17 @@ export function WellnessLogsTable() {
               </p>
             </div>
             <p className="text-red-500 dark:text-red-400 text-sm font-medium mb-6">This action cannot be undone.</p>
-            <div className="flex gap-4 justify-end">
+            <div className="flex justify-center gap-4">
               <button
                 onClick={() => setDeletingLog(null)}
-                className="px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 rounded-xl font-medium transition-all duration-200 border border-gray-300 dark:border-gray-600 hover:shadow-md"
+                className="px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 rounded-xl font-medium transition-all duration-200 border border-gray-300 dark:border-gray-600 hover:shadow-md transform hover:scale-105"
                 disabled={isDeleting}
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="px-6 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-300 dark:disabled:bg-red-700 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 disabled:cursor-not-allowed hover:shadow-lg disabled:transform-none"
+                className="px-6 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-300 dark:disabled:bg-red-700 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 disabled:cursor-not-allowed hover:shadow-lg transform hover:scale-105 disabled:transform-none"
                 disabled={isDeleting}
               >
                 {isDeleting ? <LoadingSpinner size="sm" /> : null}

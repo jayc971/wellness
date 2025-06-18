@@ -59,6 +59,7 @@
     "react-router-dom": "^6.23.0",
     "recharts": "2.15.0",
     "redux": "latest",
+    "redux-persist": "^6.0.0",
     "sass": "latest",
     "sass-embedded": "latest",
     "shadcn": "latest",
